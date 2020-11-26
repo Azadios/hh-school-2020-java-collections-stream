@@ -84,7 +84,7 @@ public class Task8 implements Task {
   // но аргумента у нас 2, а значит множественное число
   // и вроде как have, а не has правильно, но я не силён в английский. Скорее на подумать.
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    return Collections.disjoint(persons1, persons2);
+    return !Collections.disjoint(persons1, persons2);
   }
 
   //...
