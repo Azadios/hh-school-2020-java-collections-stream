@@ -5,7 +5,6 @@ import common.Task;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,38 +44,21 @@ public class Task8 implements Task {
     return new HashSet<>(getNames(persons));
   }
 
-  // Немного сомнительная фича в том плане, что если это общепринятая форма Person to String,
-  // то почему бы не сделать метод Person.toString, но ок, скажем мы не можем менять исходники Person
-  // Ну и сам факт того, что объекты могут быть null, вместо того чтобы быть пустыми объектами (i.e "")
-  // not cool man
   //Для фронтов выдадим полное имя, а то сами не могут
   public String convertPersonToString(Person person) {
-    String result = "";
-    if (person.getSecondName() != null) {
-      result += person.getSecondName();
-    }
-
-    if (person.getFirstName() != null) {
-      result += " " + person.getFirstName();
-    }
-
-    // Дубликат. Предположу, что имелось в виду middleName
-    // Стоило бы узнать наверняка, а не предполагать, но кто вообще будет использовать это?
-    if (person.getMiddleName() != null) {
-      result += " " + person.getMiddleName();
-    }
-    return result;
+    return Stream.of( person.getSecondName(),
+                      person.getFirstName(),
+                      person.getMiddleName())
+          .filter(name -> name != null)
+          .collect(Collectors.joining(" "));
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    //Сомнительная оптимизация памяти :)
-    Map<Integer, String> map = new HashMap<>();
-    for (Person person : persons) {
-      // К чему изобретать велосипед, верно?
-      map.putIfAbsent(person.getId(), convertPersonToString(person));
-    }
-    return map;
+    return persons.stream()
+          .collect(Collectors.toMap(Person::getId,
+                                    person -> convertPersonToString(person),
+                                    (presentName, newName) -> presentName));
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
